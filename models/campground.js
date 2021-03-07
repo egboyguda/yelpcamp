@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { places } = require('../seeds/seedHelpers');
 const Schema = mongoose.Schema;
 
 
