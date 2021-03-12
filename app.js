@@ -10,6 +10,7 @@ const partials = require('express-partials')
 const catchAsync = require('./utils/catchAsync')
 const ExpressError = require('./utils/ExpressError')
 const {campgroundSchema} = require('./schemas')
+const Review = require('./models/review')
 //datebase connection
 mongoose.connect('mongodb://localhost/yelp-camp', {useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex:true})
 
@@ -101,10 +102,21 @@ app.get('/beaches/:id',async(req,res)=>{
     res.render('campgrounds/camp',{camp})
 });
 
+//route para mag himu review
+app.post('/beaches/:id/reviews',catchAsync(async(req,res)=>{
+    const {id}= req.params
+    console.log(req.body)
+    const review = new Review(req.body)
+    const beach = await Campground.findById(id)
+    await beach.reviews.push(review)
+    await beach.save()
+    res.send(beach)
+}))
 app.all('*',(req,res,next)=>{
     
     next(new ExpressError('Page not found',404))
 })
+
 
 app.use((err,req,res,next)=>{
     const {statusCode=500}=err;
